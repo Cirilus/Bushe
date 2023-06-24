@@ -1,3 +1,5 @@
+from django.db.models import Count, Avg
+from django.db.models.functions import TruncDate
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.response import Response
@@ -49,3 +51,52 @@ class OrderViews(GenericViewSet,
 
     def get_queryset(self):
         return self.queryset.objects.all()
+
+
+
+class OrderStatistic(GenericViewSet):
+    queryset = Order
+
+    @extend_schema(
+        tags=["statistic"],
+        summary="the count of all couriers"
+    )
+    def get(self, request):
+        return Response(status=201, data={"counts": self.queryset.objects.count()})
+
+
+class StatusStatistic(GenericViewSet):
+    queryset = Order
+
+    @extend_schema(
+        tags=["statistic"],
+        summary="the counts of the statues"
+    )
+    def get(self, request):
+        return Response(status=201, data=self.queryset.objects.values('status').annotate(
+            count=Count("pk")
+        ).order_by("count"))
+
+
+class AverageBillStatistic(GenericViewSet):
+    queryset = Order
+
+    @extend_schema(
+        tags=["statistic"],
+        summary="the average bill"
+    )
+    def get(self, request):
+        return Response(status=201, data=self.queryset.objects.annotate(avg_price=Avg("price")))
+
+
+class AverageDailyBillStatistic(GenericViewSet):
+    queryset = Order
+
+    @extend_schema(
+        tags=["statistic"],
+        summary="the average daily bill"
+    )
+    def get(self, request):
+        averages = self.queryset.objects.annotate(
+            date=TruncDate("order_time")).values("date").annotate(average_price=Avg("price")).order_by("date")
+        return Response(status=201, data=averages)
