@@ -1,4 +1,6 @@
 from drf_spectacular.utils import extend_schema, extend_schema_view
+from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import DestroyModelMixin, \
     ListModelMixin, RetrieveModelMixin, \
@@ -32,11 +34,11 @@ from .serializers import OrderSerializer
     ),
 )
 class OrderViews(GenericViewSet,
-                RetrieveModelMixin,
-                CreateModelMixin,
-                ListModelMixin,
-                UpdateModelMixin,
-                DestroyModelMixin):
+                 RetrieveModelMixin,
+                 CreateModelMixin,
+                 ListModelMixin,
+                 UpdateModelMixin,
+                 DestroyModelMixin):
     serializer_class = OrderSerializer
     queryset = Order
     http_method_names = ["patch", "get", "delete", "post"]

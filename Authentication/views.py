@@ -1,4 +1,6 @@
 from drf_spectacular.utils import extend_schema, extend_schema_view
+from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import DestroyModelMixin, \
     ListModelMixin, RetrieveModelMixin, \
@@ -40,6 +42,15 @@ class UserViews(GenericViewSet,
     serializer_class = UserSerializer
     queryset = CustomUser
     http_method_names = ["patch", "get", "delete", "post"]
+
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        data['role'] = request.data['role']['code']
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_object(self):
         pk = self.kwargs['pk']

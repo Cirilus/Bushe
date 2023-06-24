@@ -14,7 +14,7 @@ services:
   web:
     build:
       dockerfile: Dockerfile
-      context: DjangoInit
+      context: ./
     container_name: web
     depends_on:
       - db

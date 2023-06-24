@@ -17,5 +17,4 @@ class UserSerializer(ModelSerializer):
 
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data['password'])
-        validated_data['role'] = validated_data['role']['code']
         return super().create(validated_data)
