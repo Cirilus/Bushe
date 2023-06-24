@@ -1,13 +1,14 @@
 from django.db.models import Count, Avg
 from django.db.models.functions import TruncDate
+from django.http import HttpResponse
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import DestroyModelMixin, \
     ListModelMixin, RetrieveModelMixin, \
     UpdateModelMixin, CreateModelMixin
 from django.shortcuts import get_object_or_404, get_list_or_404, render
+import pandas as pd
 
 from .models import Order
 from .serializers import OrderSerializer
@@ -53,13 +54,32 @@ class OrderViews(GenericViewSet,
         return self.queryset.objects.all()
 
 
+class ReportUploadView(GenericViewSet):
+    queryset = Order
+    serializer_class = OrderSerializer
+
+    @extend_schema(
+        tags=["csv"],
+        summary="upload the report"
+    )
+    def get(self, request):
+        orders = self.queryset.objects.all()
+        orders = self.serializer_class(orders, many=True).data
+        df = pd.DataFrame(orders)
+        csv = df.to_csv()
+        response = HttpResponse(csv, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="orders.csv"'
+
+        return response
+        # return Response(status=201)
+
 
 class OrderStatistic(GenericViewSet):
     queryset = Order
 
     @extend_schema(
         tags=["statistic"],
-        summary="the count of all couriers"
+        summary="the count of all orders"
     )
     def get(self, request):
         return Response(status=201, data={"counts": self.queryset.objects.count()})
