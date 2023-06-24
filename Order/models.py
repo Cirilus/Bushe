@@ -27,6 +27,8 @@ class Order(models.Model):
     composition = models.TextField(verbose_name="состав заказа")
     status = models.PositiveSmallIntegerField(choices=STATUS_CHOICE, blank=True, null=True, verbose_name="статус заказа")
 
+    order_time = models.DateTimeField(verbose_name="время заказа")
+
     start_address = models.TextField(verbose_name="начальный адрес")
     start_latitude = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="начальный широта")
     start_longitude = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="начальный долгота")

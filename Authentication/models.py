@@ -6,12 +6,16 @@ from Authentication.managers import CustomUserManager
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-    MANAGER = 1
-    COURIER = 2
+    MANAGER = "manager"
+    DELIVER = "deliver"
+    SUPPORT = "support"
+    CUSTOMER = "customer"
 
     ROLE_CHOICE = (
-        (MANAGER, "Manager"),
-        (COURIER, "Courier"),
+        (MANAGER, "Менеджер"),
+        (DELIVER, "Курьер"),
+        (SUPPORT, "Поддержка"),
+        (CUSTOMER, "Клиент"),
     )
 
     email = models.EmailField(unique=True, verbose_name='Электронная почта')
@@ -20,7 +24,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     firstname = models.CharField(max_length=30, verbose_name='Имя')
     lastname = models.CharField(max_length=30, verbose_name='Фамилия')
 
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICE, blank=True, null=True, verbose_name="роль")
+    role = models.CharField(choices=ROLE_CHOICE, max_length=30, blank=True, null=True, verbose_name="роль")
 
     bonus_balance = models.IntegerField(null=True, blank=True, verbose_name="бонусный баланс")
     balance = models.IntegerField(null=True, blank=True, verbose_name="баланс")

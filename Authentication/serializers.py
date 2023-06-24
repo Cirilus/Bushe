@@ -8,7 +8,7 @@ class UserSerializer(ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ("email", "phone", "password", "firstname", "lastname", "role",
+        fields = ("id", "email", "phone", "password", "firstname", "lastname", "role",
                   "bonus_balance", "balance", "rating", "is_active",
                   "is_staff",)
         extra_kwargs = {
@@ -17,4 +17,5 @@ class UserSerializer(ModelSerializer):
 
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data['password'])
+        validated_data['role'] = validated_data['role']['code']
         return super().create(validated_data)

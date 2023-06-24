@@ -15,7 +15,7 @@ RUN useradd -rms /bin/bash project && chmod 777 /opt /run
 WORKDIR /project
 
 RUN mkdir -p /project/static && mkdir -p /project/media && chown -R project:project /project && chmod 777 /project
-COPY --chown=project:project DjangoInit .
+COPY --chown=project:project . .
 
 RUN pip install -r requirements.txt
 USER project
