@@ -17,23 +17,23 @@ from .serializers import OrderSerializer
 @extend_schema_view(
     retrieve=extend_schema(
         tags=['order'],
-        summary="return user by id",
+        summary="return order by id",
     ),
     list=extend_schema(
         tags=['order'],
-        summary="return all users"
+        summary="return all orders"
     ),
     destroy=extend_schema(
         tags=['order'],
-        summary="delete the user",
+        summary="delete the order",
     ),
     partial_update=extend_schema(
         tags=['order'],
-        summary="update the user"
+        summary="update the order"
     ),
     create=extend_schema(
         tags=['order'],
-        summary="create the user",
+        summary="create the order",
     ),
 )
 class OrderViews(GenericViewSet,
@@ -48,10 +48,16 @@ class OrderViews(GenericViewSet,
 
     def get_object(self):
         pk = self.kwargs['pk']
-        return get_object_or_404(self.queryset, id=pk)
+        return self.queryset.objects.get(id=pk).prefetch_related(
+            "composition",
+            "location",
+        )
 
     def get_queryset(self):
-        return self.queryset.objects.all()
+        return self.queryset.objects.all().prefetch_related(
+            "composition",
+            "location",
+        )
 
 
 class ReportUploadView(GenericViewSet):
@@ -71,7 +77,6 @@ class ReportUploadView(GenericViewSet):
         response['Content-Disposition'] = 'attachment; filename="orders.csv"'
 
         return response
-        # return Response(status=201)
 
 
 class OrderStatistic(GenericViewSet):
