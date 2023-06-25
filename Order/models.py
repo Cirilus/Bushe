@@ -3,18 +3,18 @@ from Authentication.models import CustomUser
 
 
 class Order(models.Model):
-    PROCESSING = 0
-    PREPARED = 1
-    READY = 2
-    DELIVERED = 3
-    UNDELIVERED = 4
+    BUSY = "busy"
+    OVERTIME = "overtime"
+    DONE = "done"
+    REFUSER = "refuse"
+    WAITING = "waiting"
 
     STATUS_CHOICE = (
-        (PROCESSING, "в обработке"),
-        (PREPARED, "готовится"),
-        (READY, "готов"),
-        (DELIVERED, "доставлен"),
-        (UNDELIVERED, "не доставлен"),
+        (BUSY, "Доставка"),
+        (OVERTIME, "Просрочен"),
+        (DONE, "Доставлен"),
+        (REFUSER, "Отказ"),
+        (WAITING, "Отложен"),
     )
 
     courier = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True,
@@ -24,8 +24,9 @@ class Order(models.Model):
     payment = models.IntegerField(verbose_name="стоимость заказа для курьера")
     weight = models.DecimalField(max_digits=3, decimal_places=1, verbose_name="вес")
     duration = models.DurationField(verbose_name="продолжительность заказа")
+    road = models.FloatField(verbose_name="кол-во километров")
     composition = models.TextField(verbose_name="состав заказа")
-    status = models.PositiveSmallIntegerField(choices=STATUS_CHOICE, blank=True, null=True, verbose_name="статус заказа")
+    status = models.CharField(choices=STATUS_CHOICE, max_length=30, blank=True, null=True, verbose_name="статус заказа")
 
     order_time = models.DateTimeField(verbose_name="время заказа")
 
